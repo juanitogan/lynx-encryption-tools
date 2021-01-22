@@ -1,10 +1,10 @@
 all: lynxdec lynxenc lynxverify
 
 lynxdec: lynxdec.c sizes.h keys.h
-	gcc -g -O0 lynxdec.c -o lynxdec -l ssl
+	gcc -g -O0 lynxdec.c -o lynxdec -l ssl -l crypto
 
 lynxenc: lynxenc.c sizes.h keys.h
-	gcc -g -O0 lynxenc.c -o lynxenc -l ssl
+	gcc -g -O0 lynxenc.c -o lynxenc -l ssl -l crypto
 
 lynxverify: lynxverify.c sizes.h keys.h loaders.h
 	gcc -g -O0 lynxverify.c -o lynxverify
