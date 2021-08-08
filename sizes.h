@@ -33,6 +33,8 @@
 #ifndef _SIZES_H_
 #define _SIZES_H_
 
+#define ENCRYPTED_FRAMES            (2)
+
 #define ENCRYPTED_BLOCK_SIZE        (51)
 #define PLAINTEXT_BLOCK_SIZE        (50)
 
@@ -42,13 +44,13 @@
 
 #define ENCRYPTED_FRAME_SIZE(x)     (x * ENCRYPTED_BLOCK_SIZE)
 
-/* this is 256 bytes */
+/* this is 255 bytes */
 #define MAX_ENCRYPTED_FRAME_SIZE    (MAX_BLOCKS_PER_FRAME * ENCRYPTED_BLOCK_SIZE)
 
 #define PLAINTEXT_FRAME_SIZE(x)     (x * PLAINTEXT_BLOCK_SIZE)
 
-/* this is 256 bytes */
-#define MAX_PLAINTEXT_FRAME_SIZE    (6 + (MAX_BLOCKS_PER_FRAME * PLAINTEXT_BLOCK_SIZE))
+/* this is in chunks of 256 bytes */
+#define MAX_PLAINTEXT_FRAME_SIZE    (((MAX_BLOCKS_PER_FRAME * PLAINTEXT_BLOCK_SIZE / 256) + 1) * 256)
 
 #endif
 

@@ -226,6 +226,7 @@ int read_encrypted_frame(FILE * const in,
 
     /* decode the block count */
     frame->blocks = 256 - blocks;
+    printf("encrypted blocks: %i\n", frame->blocks);
 
     /* read in the encrypted frame */
     if(fread(&frame->data, ENCRYPTED_BLOCK_SIZE, frame->blocks, in) != frame->blocks)
@@ -239,7 +240,9 @@ int main (int argc, char ** argv)
 {
     FILE *in = 0;
     FILE *out = 0;
-    int blocks = 0;
+    int i;
+    int c;
+    //int blocks = 0;
     encrypted_frame_t encrypted_frame;
     plaintext_frame_t plaintext_frame;
 
@@ -268,9 +271,13 @@ int main (int argc, char ** argv)
     /* clear out the decrypted frame buffer */
     memset(plaintext_frame.data, 0, sizeof(plaintext_frame_t));
 
-    /* read in the next encrypted frame of data */
-    while(read_encrypted_frame(in, &encrypted_frame))
+    /* only the first two frames, "the loaders," are encrypted */
+    // while(read_encrypted_frame(in, &encrypted_frame))
+    for(i = 0; i < ENCRYPTED_FRAMES; i++)
     {
+        /* read in the next encrypted frame of data */
+        read_encrypted_frame(in, &encrypted_frame);
+
         /* decrypt a single frame of the encrypted loader */
         decrypt_frame(&plaintext_frame, &encrypted_frame, lynx_public_exp, lynx_public_mod);
 
@@ -278,9 +285,20 @@ int main (int argc, char ** argv)
         fwrite(plaintext_frame.data, MAX_PLAINTEXT_FRAME_SIZE, 1, out);
     }
 
+    /* write out the rest of the cart, if any */
+    if (!feof(in))
+    {
+        printf("writing the rest of the data as is...\n");
+        while ((c = fgetc(in)) != EOF)
+        {
+            fputc(c, out);
+        }
+    }
+
     /* close the files */
     fclose(in);
     fclose(out);
+    printf("done.\n");
 
     return EXIT_SUCCESS;
 }
